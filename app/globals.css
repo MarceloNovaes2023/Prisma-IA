@@ -1,0 +1,228 @@
+@import "tailwindcss" source(none);
+
+/*
+ * A detecção automática do Tailwind v4 varre a raiz do projeto inteira, o que
+ * inclui artefatos grandes fora do código (o executável local, dumps do banco,
+ * temporários). Declarar as fontes explicitamente mantém a compilação rápida e
+ * limitada ao código que realmente tem classes.
+ */
+@source "../app";
+@source "../components";
+@source "../lib";
+
+@theme {
+  --color-ink: #070a0e;
+  --color-surface: #0d1218;
+  --color-surface-2: #121a23;
+  --color-line: #1f2a35;
+  --color-line-soft: #172029;
+  --color-fg: #e8eef4;
+  --color-muted: #8b9aa8;
+  --color-dim: #5f6f7e;
+  --color-lime: #a3f04b;
+  --color-lime-ink: #0a1205;
+  --color-violet: #9a86ff;
+  --color-cyan: #4fd1c5;
+  --color-amber: #f5b841;
+  --color-rose: #f2607a;
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: var(--color-fg);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-lime) 30%, transparent);
+  color: #fff;
+}
+
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #24303c;
+  border-radius: 99px;
+  border: 2px solid var(--color-ink);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #33424f;
+}
+
+@layer components {
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+  }
+
+  .panel {
+    background: linear-gradient(180deg, #101822 0%, #0d1218 100%);
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    border: 1px solid var(--color-line);
+    background: #121a23;
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 9px;
+    border: 1px solid var(--color-line);
+    background: #131b24;
+    color: var(--color-fg);
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover {
+    background: #18222d;
+    border-color: #2b3947;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--color-lime);
+    border-color: var(--color-lime);
+    color: var(--color-lime-ink);
+    font-weight: 600;
+  }
+  .btn-primary:hover {
+    background: #b2fa5c;
+    border-color: #b2fa5c;
+  }
+  .btn-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--color-muted);
+  }
+  .btn-ghost:hover {
+    background: #141d26;
+    color: var(--color-fg);
+    border-color: transparent;
+  }
+
+  .input,
+  .select,
+  .textarea {
+    width: 100%;
+    background: #0b1219;
+    border: 1px solid var(--color-line);
+    border-radius: 9px;
+    padding: 8px 11px;
+    font-size: 13px;
+    color: var(--color-fg);
+    outline: none;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  .input::placeholder,
+  .textarea::placeholder {
+    color: var(--color-dim);
+  }
+  .input:focus,
+  .select:focus,
+  .textarea:focus {
+    border-color: color-mix(in srgb, var(--color-lime) 55%, #1f2a35);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-lime) 12%, transparent);
+  }
+
+  .label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-dim);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .row-hover:hover {
+    background: #101923;
+  }
+
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    background-image: radial-gradient(circle at 20% 0%, rgba(163, 240, 75, 0.08), transparent 45%),
+      radial-gradient(circle at 85% 10%, rgba(154, 134, 255, 0.08), transparent 40%);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 260ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
+
+.live-dot {
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+.scroll-area {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
