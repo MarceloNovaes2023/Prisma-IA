@@ -197,7 +197,7 @@ export async function radarDb(): Promise<AppDb> {
     await db.exec('ALTER TABLE radar_alerts ADD COLUMN source TEXT');
   }
   await db.prepare('CREATE INDEX IF NOT EXISTS idx_radar_alerts_source ON radar_alerts(source, created_at DESC)').run();
-  const row = await db.prepare('SELECT COUNT(*) AS n FROM radar_ads').first() as { n: number } | null;
+  const row = await db.prepare('SELECT COUNT(*) AS n FROM radar_ads').get() as { n: number } | null;
   if (!row || row.n === 0) {
     // seedRadar não adaptado para AppDb; banco permanece vazio no Workers (demo aceitável)
   }
