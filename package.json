@@ -1,0 +1,34 @@
+{
+  "name": "prisma-ia",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:radar": "vitest run test/radar",
+    "db:seed": "node --experimental-strip-types scripts/seed.ts"
+  },
+  "dependencies": {
+    "@knocklabs/node": "^1.40.0",
+    "@knocklabs/react": "^0.14.0",
+    "lucide-react": "^0.468.0",
+    "next": "15.5.29",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "1.20.12",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "5.9.3",
+    "vitest": "^5.0.5",
+    "wrangler": "4.148.0"
+  },
+  "type": "module"
+}
