@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "next dev -p 3100",
     "build": "next build",
+    "build:worker": "opennextjs-cloudflare build",
+    "preview:worker": "opennextjs-cloudflare preview",
+    "deploy:worker": "wrangler deploy --config wrangler.ci.jsonc",
     "start": "next start -p 3100",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
