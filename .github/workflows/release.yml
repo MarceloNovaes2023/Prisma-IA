@@ -22,6 +22,8 @@ concurrency:
 env:
   ASSET_NAME: kraken-free-buff.exe
   GH_TOKEN: ${{ github.token }}
+  # Sem checkout no job, o gh não teria remote para inferir o repositório.
+  GH_REPO: ${{ github.repository }}
   KRAKEN_EXE_URL: ${{ vars.KRAKEN_EXE_URL || secrets.KRAKEN_EXE_URL }}
   KRAKEN_EXE_SHA256: ${{ vars.KRAKEN_EXE_SHA256 || secrets.KRAKEN_EXE_SHA256 }}
 
