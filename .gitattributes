@@ -1,1 +1,6 @@
-Kraken[[:space:]]Free[[:space:]]Buff.exe filter=lfs diff=lfs merge=lfs -text
+# O binário do app (Kraken Free Buff.exe, ~260 MB) não é versionado aqui:
+# ele é distribuído fora do repositório e baixado com `npm run kraken:download`.
+# Nada de LFS neste repositório — sem filtro, um `git add` acidental falha no
+# limite de 100 MB do GitHub em vez de empurrar um ponteiro quebrado.
+*.exe binary
+*.dll binary

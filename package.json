@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:radar": "vitest run test/radar",
-    "db:seed": "node --experimental-strip-types scripts/seed.ts"
+    "db:seed": "node --experimental-strip-types scripts/seed.ts",
+    "kraken:download": "node scripts/download-kraken-exe.mjs"
   },
   "dependencies": {
     "@knocklabs/node": "^1.40.0",

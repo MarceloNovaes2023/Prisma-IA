@@ -24,6 +24,31 @@ npm run build
 npm start
 ```
 
+## Binário do app (fora do repositório)
+
+O executável `Kraken Free Buff.exe` tem ~260 MB — acima do limite de 100 MB por arquivo do GitHub — e por isso
+não é versionado. O histórico do repositório foi reescrito para removê-lo e o arquivo é distribuído à parte,
+como asset de release (ou qualquer URL direta).
+
+Ele vive em `vendor/`, que é ignorado pelo Git (`*.exe` também), e é obtido sob demanda:
+
+```bash
+# configure KRAKEN_EXE_URL em .env (o SHA-256 da build atual já está em .env.example)
+npm run kraken:download              # baixa se ainda não existir
+npm run kraken:download -- --force   # rebaixa
+```
+
+O script grava primeiro em `.part` e só promove o arquivo quando o SHA-256 confere, então um download
+interrompido nunca deixa um binário quebrado em `vendor/`.
+
+Para publicar uma nova build (uma vez, com o GitHub CLI):
+
+```bash
+gh release create v0.1.0 "Kraken Free Buff.exe" --title "Kraken Free Buff v0.1.0" --notes "binário do app"
+```
+
+Copie a URL do asset exibida pelo `gh` para `KRAKEN_EXE_URL` e atualize `KRAKEN_EXE_SHA256` se a build mudou.
+
 ## WhatsApp oficial (Meta Cloud API)
 
 1. Crie um app Business em `developers.facebook.com` e adicione o produto WhatsApp.

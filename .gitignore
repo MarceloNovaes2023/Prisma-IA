@@ -12,3 +12,8 @@ tsconfig.tsbuildinfo
 /freebuff-sites-build/
 /.open-next/
 /.wrangler/
+
+# Binário grande do app — distribuído fora do repositório (ver README).
+vendor/
+*.exe
+*.dll
