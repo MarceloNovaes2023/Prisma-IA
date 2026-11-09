@@ -41,13 +41,22 @@ npm run kraken:download -- --force   # rebaixa
 O script grava primeiro em `.part` e só promove o arquivo quando o SHA-256 confere, então um download
 interrompido nunca deixa um binário quebrado em `vendor/`.
 
-Para publicar uma nova build (uma vez, com o GitHub CLI):
+Publicação de uma build nova é automática: o workflow `.github/workflows/release.yml` roda a cada tag `v*`,
+baixa a build, confere o SHA-256 e anexa como asset do release daquela tag.
 
-```bash
-gh release create v0.1.0 "Kraken Free Buff.exe" --title "Kraken Free Buff v0.1.0" --notes "binário do app"
-```
+Antes do primeiro uso, configure em **Settings → Secrets and variables → Actions → Variables**:
 
-Copie a URL do asset exibida pelo `gh` para `KRAKEN_EXE_URL` e atualize `KRAKEN_EXE_SHA256` se a build mudou.
+| Variable | Valor |
+| --- | --- |
+| `KRAKEN_EXE_URL` | URL direta onde a build nova está (obrigatória) |
+| `KRAKEN_EXE_SHA256` | hash esperado do arquivo (recomendada) |
+
+Depois basta `git tag v0.1.1 && git push origin v0.1.1`. O workflow falha de propósito se a URL não estiver
+configurada, se o download vier pequeno demais (página de erro) ou se o hash não conferir — tag com download
+quebrado é pior do que tag sem release. Se a tag já tiver release, o asset é substituído (`--clobber`).
+
+Para publicar na mão, com o GitHub CLI: `gh release create v0.1.1 "Kraken Free Buff.exe" --title "Kraken Free Buff v0.1.1" --notes "binário do app"`.
+Depois copie a URL do asset para `KRAKEN_EXE_URL` no seu `.env.local` (configuração local do script de download).
 
 ## WhatsApp oficial (Meta Cloud API)
 

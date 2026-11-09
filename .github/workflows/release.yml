@@ -1,0 +1,97 @@
+name: Release (binário do app)
+
+# Publica o Kraken Free Buff.exe como asset de cada tag v*.
+# O executável não vive no repositório (passa do limite de 100 MB por arquivo do
+# GitHub), então o job baixa a build de uma URL configurada e confere o SHA-256
+# antes de anexar — tag com download quebrado é pior do que tag sem release.
+#
+# Configuração (Settings → Secrets and variables → Actions → Variables):
+#   KRAKEN_EXE_URL     URL direta da build (asset de release, R2, Drive…)
+#   KRAKEN_EXE_SHA256  hash esperado do arquivo (recomendado)
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  ASSET_NAME: kraken-free-buff.exe
+  GH_TOKEN: ${{ github.token }}
+  KRAKEN_EXE_URL: ${{ vars.KRAKEN_EXE_URL || secrets.KRAKEN_EXE_URL }}
+  KRAKEN_EXE_SHA256: ${{ vars.KRAKEN_EXE_SHA256 || secrets.KRAKEN_EXE_SHA256 }}
+
+jobs:
+  publish:
+    name: Anexar binário ao release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Conferir configuração
+        run: |
+          set -euo pipefail
+          if [ -z "${KRAKEN_EXE_URL}" ]; then
+            echo "::error::Defina a variable KRAKEN_EXE_URL (Settings → Secrets and variables → Actions → Variables) com a URL da build."
+            exit 1
+          fi
+          if [ -z "${KRAKEN_EXE_SHA256}" ]; then
+            echo "::warning::KRAKEN_EXE_SHA256 não definido; o hash será só publicado nas notas do release, sem validação."
+          fi
+
+      - name: Baixar build
+        run: |
+          set -euo pipefail
+          mkdir -p vendor
+          curl -fL --retry 3 --retry-delay 5 --retry-all-errors \
+            -o "vendor/${ASSET_NAME}" "${KRAKEN_EXE_URL}"
+
+      - name: Validar tamanho e SHA-256
+        run: |
+          set -euo pipefail
+          FILE="vendor/${ASSET_NAME}"
+          SIZE=$(stat -c %s "${FILE}")
+          # Um 404/HTML de login tem alguns KB; o binário real tem centenas de MB.
+          if [ "${SIZE}" -lt 1048576 ]; then
+            echo "::error::Download suspeito: ${SIZE} bytes. A URL provavelmente devolveu uma página de erro."
+            exit 1
+          fi
+          SHA=$(sha256sum "${FILE}" | awk '{print $1}')
+          echo "baixado: ${SIZE} bytes | sha256 ${SHA}"
+          echo "SHA_DOWNLOAD=${SHA}" >> "${GITHUB_ENV}"
+          if [ -n "${KRAKEN_EXE_SHA256}" ] && [ "${SHA}" != "${KRAKEN_EXE_SHA256}" ]; then
+            echo "::error::SHA-256 não confere. esperado ${KRAKEN_EXE_SHA256}, recebido ${SHA}."
+            exit 1
+          fi
+
+      - name: Publicar release
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          FILE="vendor/${ASSET_NAME}"
+          NOTES=$(mktemp)
+          {
+            echo "Binário do app **Kraken Free Buff** (~260 MB), distribuído fora do repositório porque passa do limite de 100 MB por arquivo do GitHub."
+            echo
+            echo "Baixe pelo script do projeto, que valida o SHA-256 antes de gravar:"
+            echo
+            echo '```bash'
+            echo "npm run kraken:download"
+            echo '```'
+            echo
+            echo "SHA-256: \`${SHA_DOWNLOAD}\`"
+          } > "${NOTES}"
+
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            echo "release ${TAG} já existe; atualizando o asset"
+            gh release upload "${TAG}" "${FILE}" --clobber
+          else
+            gh release create "${TAG}" "${FILE}" \
+              --title "Kraken Free Buff ${TAG}" \
+              --notes-file "${NOTES}"
+          fi
+
+          echo "asset publicado: https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${ASSET_NAME}"
