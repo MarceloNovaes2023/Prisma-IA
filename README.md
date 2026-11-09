@@ -33,10 +33,17 @@ como asset de release (ou qualquer URL direta).
 Ele vive em `vendor/`, que é ignorado pelo Git (`*.exe` também), e é obtido sob demanda:
 
 ```bash
-# configure KRAKEN_EXE_URL em .env (o SHA-256 da build atual já está em .env.example)
-npm run kraken:download              # baixa se ainda não existir
+# configure KRAKEN_EXE_URL em .env.local (o SHA-256 da build atual já está em .env.example)
+npm run kraken:download              # baixa se faltar e avisa se estiver velho
 npm run kraken:download -- --force   # rebaixa
+npm run kraken:download -- --check   # só confere contra o release, sem baixar
 ```
+
+Quando a URL aponta para um asset de release do GitHub, o script consulta o release e compara o binário
+local com o `digest` publicado. Se o release tiver outra build, ele **falha** com código 1 dizendo que o
+arquivo está desatualizado (e recomenda `--force`) — em vez de dizer "já existe" e deixar você rodando uma
+versão velha. `--check` faz só essa comparação: sai 0 se está em dia, 1 se está velho ou ausente, e 2 quando
+não dá para conferir (URL que não é release, release apagado, API fora do ar ou limite de consultas).
 
 O script grava primeiro em `.part` e só promove o arquivo quando o SHA-256 confere, então um download
 interrompido nunca deixa um binário quebrado em `vendor/`.
